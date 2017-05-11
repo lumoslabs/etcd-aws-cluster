@@ -1,11 +1,12 @@
 FROM gliderlabs/alpine:3.4
 
-RUN apk --update add \
+RUN apk --update --no-cache add \
       python \
       py-pip \
       jq \
       curl \
       wget \
+      tini \
       bash &&\
       pip install --upgrade awscli &&\
       mkdir /root/.aws
@@ -18,4 +19,4 @@ VOLUME ["/root/.aws"]
 # Expose directory to write output to, and to potentially read certs from
 VOLUME ["/etc/sysconfig/", "/etc/certs"]
 
-ENTRYPOINT /etcd-aws-cluster
+ENTRYPOINT ["/sbin/tini", "-g", "--", "/etcd-aws-cluster"]
